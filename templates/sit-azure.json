@@ -1,0 +1,21 @@
+{
+  "name": "sit-azure-deployment",
+  "description": "SIT Azure environment deployment template",
+  "fields": {
+    "myenvironment": "Enter environment (e.g., dev, prod)",
+    "image_name": "Enter image name",
+    "acr_name": "Enter acr name",
+    "aks_cluster_name": "Enter aks cluster name",
+    "resource_group": "Enter resource group",
+    "resource_id": "Enter resource id",
+    "client_id": "Enter client id",
+    "namespace": "Enter namespace",
+    "release_name": "Enter release name",
+    "chart_repo": "Enter chart repo",
+    "chart_name": "Enter chart name",
+    "chart_version": "Enter chart version",
+    "value_file_path": "Enter value file path",
+    "enable_uninstall": "Enable automatic uninstall (true/false)",
+    "email_receiver": "Enter notification email"
+  }
+}

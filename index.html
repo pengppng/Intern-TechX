@@ -14,6 +14,13 @@
       <p>Generate Complex Shell Commands Visually</p>
     </div>
 
+    <div class="section">
+        <h2>💾 Template Management</h2>
+        <div>
+          <button type="button" class="btn btn-add" onclick="showModeSelection()">🚀 Start Building</button>
+        </div>
+     </div>
+
     <!-- Main Content -->
     <div class="main-content">
       <!-- File Selection Section -->
@@ -43,7 +50,7 @@
           <label for="filePattern">File Patterns:</label>
           <div class="operations-container" id="filePatterns">
             <div class="operation-item">
-              <input type="text" class="operation-input" placeholder="File pattern (e.g., *.groovy)" value="*sit*-azure.groovy" oninput="generateCommand()">
+              <input type="text" class="operation-input" placeholder="File pattern (e.g., *.groovy)" value="" oninput="generateCommand()">
               <button type="button" class="btn btn-remove" onclick="removeFilePattern(this)">❌</button>
             </div>
           </div>
@@ -55,7 +62,7 @@
           <label for="contentText">Text Content to Search:</label>
           <div class="operations-container" id="contentPatterns">
             <div class="operation-item">
-              <input type="text" class="operation-input" placeholder="Text content to search for" value="git_params" oninput="generateCommand()">
+              <input type="text" class="operation-input" placeholder="Text content to search for" value="" oninput="generateCommand()">
               <button type="button" class="btn btn-remove" onclick="removeContentPattern(this)">❌</button>
             </div>
           </div>
@@ -90,7 +97,7 @@
         <h2>🗑️ Delete Lines</h2>
         <div class="operations-container" id="deleteOperations">
           <div class="operation-item">
-            <input type="text" class="operation-input" placeholder="Pattern to delete (e.g., git_params:)" value="git_params: 'PT_TAG',">
+            <input type="text" class="operation-input" placeholder="Pattern to delete (e.g., git_params:)" value="">
             <button type="button" class="btn btn-remove" onclick="removeOperation(this)">❌</button>
           </div>
         </div>
@@ -102,9 +109,9 @@
         <h2>🔄 Replace Text</h2>
         <div class="operations-container" id="replaceOperations">
           <div class="operation-item">
-            <input type="text" class="operation-input" placeholder="Find text" value="dev">
+            <input type="text" class="operation-input" placeholder="Find text" value="">
             <span style="color: #ff6b35; font-weight: bold;">→</span>
-            <input type="text" class="operation-input" placeholder="Replace with" value="sit">
+            <input type="text" class="operation-input" placeholder="Replace with" value="">
             <button type="button" class="btn btn-remove" onclick="removeOperation(this)">❌</button>
           </div>
         </div>
@@ -134,6 +141,69 @@
       <div id="templatesList"></div>
     </div>
   </div>
+
+  <!-- Mode Selection Modal -->
+  <div class="modal" id="modeSelectionModal">
+    <div class="modal-content">
+      <h3>🛠️ Choose Action</h3>
+      <div class="mode-buttons">
+        <button class="mode-btn" onclick="showTemplateSelection()">
+          <div class="mode-icon">➕</div>
+          <div class="mode-title">Add New</div>
+          <div class="mode-desc">Create from template</div>
+        </button>
+        <!-- <button class="mode-btn" onclick="showEditMode()">
+          <div class="mode-icon">✏️</div>
+          <div class="mode-title">Edit Current</div>
+          <div class="mode-desc">Modify existing setup</div>
+        </button> -->
+      </div>
+      <button class="btn btn-secondary" onclick="closeModeSelection()" style="width: 100%; margin-top: 20px;">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Template Selection Modal -->
+  <div class="modal" id="templateSelectionModal">
+    <div class="modal-content template-modal">
+      <h3>📋 Choose Template</h3>
+      <div class="templates-grid" id="templatesGrid">
+        <div class="loading">Loading templates...</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="backToModeSelection()">← Back</button>
+        <button class="btn btn-primary" onclick="proceedWithTemplate()" disabled id="proceedBtn">Use Template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Form Modal -->
+  <div class="modal" id="dynamicFormModal">
+    <div class="modal-content form-modal">
+      <h3 id="formTitle">📝 Configure Template</h3>
+      <div class="template-info" id="templateInfo"></div>
+      <form id="dynamicForm">
+        <!-- Dynamic form fields will be generated here -->
+      </form>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="backToTemplateSelection()">← Back</button>
+        <button class="btn btn-primary" onclick="applyTemplate()">Apply Template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal
+  <div class="modal" id="editModal">
+    <div class="modal-content form-modal">
+      <h3>✏️ Edit Configuration</h3>
+      <p>Edit your current configuration directly in the form above, or load a saved template.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Close</button>
+        <button class="btn btn-primary" onclick="loadExistingTemplate()">Load Template</button>
+      </div>
+    </div>
+  </div> -->
 
   <div class="toast" id="toast">Command copied to clipboard!</div>
   <script src="script.js"></script>
