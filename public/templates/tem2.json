@@ -1,0 +1,38 @@
+{
+  "name": "adf-deployment",
+  "description": "ADF deployment template",
+  "fields": {
+    library 'lib-deploy-azure@v1.35.0'
+deployADFContainerAppJob(
+    JENKINS_EXECUTION_IMAGE: 'harbordev.se.scb.co.th/library/azure-cli:2.62.0', // prod -> harbor.scb.co.th/library/azure-cli:2.62.0
+    JENKINSFILE_GIT_TYPE: 'PT_TAG', // PT_BRANCH, PT_TAG
+
+    DEPLOY_ENV: 'dev', // dev, sit, uat, prod
+    AGENT_MSI: 'ec557dbd-1072-4b53-8455-4596a68a9a6e', // LVLJenkinsRole_DEV clientid **
+
+    SUBSCRIPTION_ID: '7148d64b-54cf-4746-84be-f56a853b5281',
+    RESOURCE_GROUP: 'RG-SEA-LVL-DEV-001',
+
+    AKV_NAME: 'scblvlseaakv001dev',
+    AKV_SPLUNK_SECRET_NAME: 'test', // lapikey--dsm--splunk **
+
+    ADF_NAME: 'scblvlseaadf001dev',
+    ADF_PIPELINE_NAME: 'LVL_pipeline_common-data-management',
+    ADF_CREDENTIAL_APPROLE: 'LVLAppRole', // to get splunk-api-key and trigger container-app-job
+    ADF_PARAMETERS: '{ \\"datetime_timezone\\": { \\"type\\": \\"string\\", \\"defaultValue\\": \\"SE Asia Standard Time\\" }, \\"datetime_format\\": { \\"type\\": \\"string\\", \\"defaultValue\\": \\"yyyy-MM-dd_HH:mm:ss\\" } }', // optional **
+    ADF_IR_NAME: 'self-hosted-ir', // only for `GetSplunkKey` activity
+
+    CONTAINER_APP_JOB_NAME: 'dev-common-data-management',
+    // CONTAINER_APP_JOB_COMMAND: '[\\"cmd1\\", \\"cmd2\\"]', // optional (override at runtime)
+    // CONTAINER_APP_JOB_ARGS: '[\\"arg1\\", \\"arg2\\"]', // optional (override at runtime)
+    // CONTAINER_APP_JOB_ENV_VARS: '[{\\"name\\": \\"key1\\", \\"value\\": \\"value1\\"}, {\\"name\\": \\"key2\\", \\"value\\": \\"value2\\"}]', // optional (override at runtime)
+
+    // (optional) To create and assign trigger via jenkins, use these params below (this will NOT update the existing one)
+    ADF_TRIGGER_NAME: 'LVL_trigger_batch-common-data-management',
+    ADF_TRIGGER_START_TIME: '2025-03-13T00:00:00', // use this exact format (Asia/Bangkok TZ) **
+    ADF_TRIGGER_FREQUENCY: 'Day', // one of these: ['Minute', 'Hour', 'Day', 'Week', 'Month'] **
+    ADF_TRIGGER_INTERVAL: '1' // **
+)
+ 
+  }
+}
