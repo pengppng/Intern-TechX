@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shell Command Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🛠️ Shell Command Builder</h1>
+      <p>Generate Complex Shell Commands Visually</p>
+    </div>
+
+    <div class="section">
+        <h2>💾 Template Management</h2>
+        <div>
+          <button type="button" class="btn btn-add" onclick="showModeSelection()">🚀 Start Building</button>
+        </div>
+     </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- File Selection Section -->
+      <div class="section">
+        <h2>🎯 Target Files</h2>
+        <div class="form-group">
+          <label for="basePath">Base Path:</label>
+          <input type="text" id="basePath" class="form-control" value="" placeholder="/path/to/directory">
+        </div>
+
+        <div class="form-group">
+          <label>Selection Method:</label>
+          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <label>
+              <input type="radio" name="selectionMethod" value="pattern" checked onchange="handleSelectionMethodChange()">
+              📄 File Pattern
+            </label>
+            <label>
+              <input type="radio" name="selectionMethod" value="content" onchange="handleSelectionMethodChange()">
+              🔍 Files Containing Text
+            </label>
+          </div>
+        </div>
+
+        <!-- Pattern group -->
+        <div class="form-group" id="patternGroup">
+          <label for="filePattern">File Patterns:</label>
+          <div class="operations-container" id="filePatterns">
+            <div class="operation-item">
+              <input type="text" class="operation-input" placeholder="File pattern (e.g., *.groovy)" value="" oninput="generateCommand()">
+              <button type="button" class="btn btn-remove" onclick="removeFilePattern(this)">❌</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-add" onclick="addFilePattern()">+ Add File Pattern</button>
+        </div>
+
+        <!-- Content group -->
+        <div class="form-group" id="contentGroup" style="display: none;">
+          <label for="contentText">Text Content to Search:</label>
+          <div class="operations-container" id="contentPatterns">
+            <div class="operation-item">
+              <input type="text" class="operation-input" placeholder="Text content to search for" value="" oninput="generateCommand()">
+              <button type="button" class="btn btn-remove" onclick="removeContentPattern(this)">❌</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-add" onclick="addContentPattern()">+ Add Search Text</button>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="includeSubdirs" checked>
+            <label for="includeSubdirs">Include Subdirectories</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="filesOnly" checked>
+            <label for="filesOnly">Files Only (not directories)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Options Section -->
+      <div class="section">
+        <h2>⚙️ Options</h2>
+        <div class="form-group">
+          <div class="checkbox-group"><input type="checkbox" id="createBackup"><label for="createBackup">💾 Create Backup Files</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="useRegex"><label for="useRegex">🎯 Use Regular Expressions</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="caseInsensitive"><label for="caseInsensitive">🔤 Case Insensitive</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="verboseOutput"><label for="verboseOutput">📝 Verbose Output</label></div>
+        </div>
+      </div>
+
+      <!-- Delete Lines Section -->
+      <div class="section">
+        <h2>🗑️ Delete Lines</h2>
+        <div class="operations-container" id="deleteOperations">
+          <div class="operation-item">
+            <input type="text" class="operation-input" placeholder="Pattern to delete (e.g., git_params:)" value="">
+            <button type="button" class="btn btn-remove" onclick="removeOperation(this)">❌</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-add" onclick="addDeleteOperation()">+ Add Delete Pattern</button>
+      </div>
+
+      <!-- Replace Text Section -->
+      <div class="section">
+        <h2>🔄 Replace Text</h2>
+        <div class="operations-container" id="replaceOperations">
+          <div class="operation-item">
+            <input type="text" class="operation-input" placeholder="Find text" value="">
+            <span style="color: #ff6b35; font-weight: bold;">→</span>
+            <input type="text" class="operation-input" placeholder="Replace with" value="">
+            <button type="button" class="btn btn-remove" onclick="removeOperation(this)">❌</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-add" onclick="addReplaceOperation()">+ Add Replace Rule</button>
+      </div>
+    </div>
+
+    <!-- Command Output Section -->
+    <div class="section command-section">
+      <h2>📋 Generated Command</h2>
+      <div class="command-output" id="commandOutput"></div>
+      <div class="action-buttons">
+        <button type="button" class="btn btn-primary" onclick="copyCommand()">📋 Copy Command</button>
+        <button type="button" class="btn btn-secondary" onclick="previewFiles()">👀 Preview Files</button>
+        <button type="button" class="btn btn-secondary" onclick="saveTemplate()">💾 Save Template</button>
+        <button type="button" class="btn btn-secondary" onclick="exportCommand()">📤 Export</button>
+      </div>
+      <div class="preview-section" id="previewSection" style="display: none;">
+        <h3>🔍 Files that will be affected:</h3>
+        <div class="file-list" id="fileList"></div>
+      </div>
+    </div>
+
+    <!-- File Creation Command Section -->
+    <div class="section command-section" id="fileCreationSection" style="display: none;">
+      <h2>📄 File Creation Command</h2>
+      <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">
+        Copy this command and run it in your terminal to create the deployment file
+      </p>
+      
+      <div class="command-output" id="fileCreationOutput"></div>
+      
+      <div class="action-buttons" style="margin-top: 15px;">
+        <button class="btn btn-primary" onclick="copyFileCreationCommand()">
+          📋 Copy File Creation Command
+        </button>
+        <button class="btn btn-secondary" onclick="downloadFileCreationScript()">
+          💾 Download as .sh file
+        </button>
+      </div>
+      
+      <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;" id="fileCreationHint">
+        <strong>💡 How to use:</strong>
+        <ol style="margin: 10px 0 0 20px; font-size: 0.9em;">
+          <li>Click "Copy File Creation Command" button above</li>
+          <li>Open your terminal</li>
+          <li>Paste the command (Ctrl+V or Cmd+V)</li>
+          <li>Press Enter to execute</li>
+          <li>The file will be created at the specified path</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Templates Section -->
+    <div class="section templates-section">
+      <h2>📚 Saved Templates</h2>
+      <div id="templatesList"></div>
+    </div>
+  </div>
+
+  
+
+  <!-- Template Selection Modal -->
+  <div class="modal" id="templateSelectionModal">
+    <div class="modal-content template-modal">
+      <h3>📋 Choose Template</h3>
+      <div class="templates-grid" id="templatesGrid">
+        <div class="loading">Loading templates...</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="backToModeSelection()">← Back</button>
+        <button class="btn btn-primary" onclick="proceedWithTemplate()" disabled id="proceedBtn">Use Template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Form Modal -->
+  <div class="modal" id="dynamicFormModal">
+    <div class="modal-content form-modal">
+      <h3 id="formTitle">📝 Configure Template</h3>
+      <div class="template-info" id="templateInfo"></div>
+      <form id="dynamicForm">
+        <!-- Dynamic form fields will be generated here -->
+      </form>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="backToTemplateSelection()">← Back</button>
+        <button class="btn btn-primary" onclick="applyTemplate()">Apply Template</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Command copied to clipboard!</div>
+  <script src="script.js"></script>
+</body>
+</html>
